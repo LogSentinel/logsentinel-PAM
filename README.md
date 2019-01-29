@@ -11,9 +11,9 @@ If some of them are not valid there is a possibility of malicious actions, so ac
 1. run build.sh or commands in it (different linux distributions have different paths, so check it)
     - compile
 `gcc -fPIC -fno-stack-protector -c src/pam_logsentinel.c`
-    - check where pam modules are
+    - build module
 `sudo ld -x --shared -o /lib/i386-linux-gnu/security/pam_logsentinel.so pam_logsentinel.o`
-    - this file can be located anywhere. Other pam modules' configs are in /etc/security/
+    - copy config file
 `cp logsentinel.conf /etc/security/logsentinel.conf`
     - edit logsentinel.conf with appropriate properties:
          + aliveUrl - url which will be hit to check if logsentinel app is working
