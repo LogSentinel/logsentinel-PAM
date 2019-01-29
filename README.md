@@ -1,6 +1,6 @@
 # logsentinel-PAM
 PAM module performing some checks and logs before ssh login
-- checks if logsentinel application is alive (if not allows access)
+- checks if logsentinel application is alive (if not, allows access)
 - checks configurable list of domains for their certificates to be valid (Ethereum, time stamping service).
 If some of them are not valid there is a possibility of malicious actions, so access is not allowed
 - logs login attempts in logsentinel
@@ -16,13 +16,13 @@ If some of them are not valid there is a possibility of malicious actions, so ac
     - this file can be located anywhere. Other pam modules' configs are in /etc/security/
 `cp logsentinel.conf /etc/security/logsentinel.conf`
     - edit logsentinel.conf with appropriate properties:
-         aliveUrl - url which will be hit to check if logsentinel app is working
-         checkDomainCerts - domains certificates to check before login (ex Ethereum, timestamping service etc.)
-         authorizationHeader - base64(organizationId:organizationSecret) can be found in logsentinel dashboard
-         applicationId - can be found in logsentinel dashboard
-         logUrl - url of the API where logs will be sent
+         + aliveUrl - url which will be hit to check if logsentinel app is working
+         + checkDomainCerts - domains certificates to check before login (ex Ethereum, timestamping service etc.)
+         + authorizationHeader - base64(organizationId:organizationSecret) can be found in logsentinel dashboard
+         + applicationId - can be found in logsentinel dashboard
+         + logUrl - url of the API where logs will be sent
 
-2. The PAM config files are located in `/etc/pam.d/
+2. The PAM config files are located in `/etc/pam.d/`
     - open /etc/pam.d/sshd and append at the end of it
 `auth requisite pam_logsentinel.so /etc/security/logsentinel.conf`
 /etc/security/logsentinel.conf is the path to the conf file (change it if it is somewhere else)
