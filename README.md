@@ -16,11 +16,11 @@ If some of them are not valid there is a possibility of malicious actions, so ac
     - this file can be located anywhere. Other pam modules' configs are in /etc/security/
 `cp logsentinel.conf /etc/security/logsentinel.conf`
     - edit logsentinel.conf with appropriate properties:
-    * aliveUrl - url which will be hit to check if logsentinel app is working
-    * checkDomainCerts - domains certificates to check before login (ex Ethereum, timestamping service etc.)
-    * authorizationHeader - base64(organizationId:organizationSecret) can be found in logsentinel dashboard
-    * applicationId - can be found in logsentinel dashboard
-    * logUrl - url of the API where logs will be sent
+         aliveUrl - url which will be hit to check if logsentinel app is working
+         checkDomainCerts - domains certificates to check before login (ex Ethereum, timestamping service etc.)
+         authorizationHeader - base64(organizationId:organizationSecret) can be found in logsentinel dashboard
+         applicationId - can be found in logsentinel dashboard
+         logUrl - url of the API where logs will be sent
 
 2. The PAM config files are located in `/etc/pam.d/
     - open /etc/pam.d/sshd and append at the end of it
