@@ -40,6 +40,8 @@ char** str_split(char* a_str, const char a_delim) {
     }
 
     count += last_comma < (a_str + strlen(a_str) - 1);
+
+
     count++;
 
     result = malloc(sizeof(char*) * count);
@@ -75,6 +77,7 @@ PAM_EXTERN int pam_sm_authenticate( pam_handle_t *pamh, int flags,int argc, cons
 		return PAM_SUCCESS;
 	}
 
+
 	char *line = NULL;
 	size_t len = 0;
 	ssize_t read;
@@ -84,6 +87,7 @@ PAM_EXTERN int pam_sm_authenticate( pam_handle_t *pamh, int flags,int argc, cons
 	char authorizationHeader[1000];
 	char applicationId[1000];
 	char logUrl[1000];
+	char pushTo[100];
 
 	while ((read = getline(&line, &len, fptr)) != -1) {
 		if ( startsWith("aliveUrl", line) != 0) {
@@ -105,6 +109,10 @@ PAM_EXTERN int pam_sm_authenticate( pam_handle_t *pamh, int flags,int argc, cons
 		if ( startsWith("logUrl", line) != 0) {
 			strcpy(logUrl, line + 7);
 			strtok(logUrl, "\n");
+		}
+		if ( startsWith("pushTo", line) != 0) {
+			strcpy(pushTo, line + 7);
+			strtok(pushTo, "\n");
 		}
 
 	}
@@ -170,9 +178,13 @@ PAM_EXTERN int pam_sm_authenticate( pam_handle_t *pamh, int flags,int argc, cons
 	strcat(curlCommand, applicationId);
 	strcat(curlCommand, "' -H 'Content-Type:application/json' -d '{}' -X POST ");
 	strcat(curlCommand, logUrl);
-	strcat(curlCommand, "/loginLogsentinel/SYSTEM/0?directExternalPush=ETHEREUM");
+	strcat(curlCommand, pUsername);
+	strcat(curlCommand, "/LOGSENTINEL_LOGIN/SYSTEM/0?directExternalPush=");
+	strcat(curlCommand, pushTo);
+
 
 	logResult = system(curlCommand);
+
 	printf("Login attempt is %s logged in logsentinel\n", logResult == 0 ? "sucessfully" : "not successfully");
 	if (logResult != 0) {
 		pam_syslog(pamh, LOG_ERR, "Cannot log login event in Logsentinel instance %s", logUrl);

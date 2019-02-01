@@ -21,6 +21,7 @@ If some of them are not valid there is a possibility of malicious actions, so ac
          + authorizationHeader - base64(organizationId:organizationSecret) can be found in logsentinel dashboard
          + applicationId - can be found in logsentinel dashboard
          + logUrl - url of the API where logs will be sent
+         + pushTo - one ore more (comma separated) of the following: ETHEREUM, QTSA, EMAIL, TWITTER
 
 2. The PAM config files are located in `/etc/pam.d/`
     - open /etc/pam.d/sshd and append at the end of it
