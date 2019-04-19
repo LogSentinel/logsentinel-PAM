@@ -14,6 +14,8 @@ If some of them are not valid there is a possibility of malicious actions, so ac
 `gcc -fPIC -fno-stack-protector -c src/pam_logsentinel.c`
     - build module
 `sudo ld -x --shared -o /lib/i386-linux-gnu/security/pam_logsentinel.so pam_logsentinel.o`
+or (for CentOS)
+`sudo ld -x --shared -o /lib64/security/pam_logsentinel.so pam_logsentinel.o`
     - copy config file
 `cp logsentinel.conf /etc/security/logsentinel.conf`
     - edit logsentinel.conf with appropriate properties:
