@@ -8,7 +8,7 @@ If some of them are not valid there is a possibility of malicious actions, so ac
 
 # Usage
 
-0. yum install git && yum install pam-devel
+0. install git, pam-devel (on ubuntu it's libpam-dev), gcc
 1. run build.sh or commands in it (different linux distributions have different paths, so check it)
     - compile
 `gcc -fPIC -fno-stack-protector -c src/pam_logsentinel.c`
@@ -28,7 +28,7 @@ or (for CentOS)
 
 2. The PAM config files are located in `/etc/pam.d/`
     - open /etc/pam.d/sshd and append at the end of it
-`auth requisite pam_logsentinel.so /etc/security/logsentinel.conf`
+`session requisite pam_logsentinel.so /etc/security/logsentinel.conf`
 /etc/security/logsentinel.conf is the path to the conf file (change it if it is somewhere else)
     - try to ssh
 
