@@ -5,6 +5,7 @@
 #include <security/pam_modules.h>
 #include <syslog.h>
 #include <stdbool.h>
+#include <unistd.h>
 
 char** str_split(char* a_str, const char a_delim) {
 
@@ -63,8 +64,6 @@ PAM_EXTERN int pam_sm_open_session(pam_handle_t *pamh, int flags, int argc, cons
 		pam_syslog(pamh, LOG_ERR, "Couldn't open Logsentinel PAM config. Check file %s\n", argv[0]);
 		return PAM_SUCCESS;
 	}
-
-	pam_syslog(pamh, LOG_INFO, "Arg 1 %s\n", argv[1]);
 	
 	char *line = NULL;
 	size_t len = 0;
@@ -157,6 +156,9 @@ PAM_EXTERN int pam_sm_open_session(pam_handle_t *pamh, int flags, int argc, cons
 		free(domains);
 	}
 
+	char hostname[1024];
+        gethostname(hostname, 1024);
+	
 	int logResult;
 
 	char curlCommand[1000];
@@ -164,7 +166,9 @@ PAM_EXTERN int pam_sm_open_session(pam_handle_t *pamh, int flags, int argc, cons
 	strcat(curlCommand, authorizationHeader);
 	strcat(curlCommand, "' -H 'Application-Id:");
 	strcat(curlCommand, applicationId);
-	strcat(curlCommand, "' -H 'Content-Type:application/json' -d '{}' -X POST ");
+	strcat(curlCommand, "' -H 'Content-Type:application/json' -d '{\"hostname\": \"");
+	strcat(curlCommand, hostname);
+	strcat(curlCommand, "\"}' -X POST ");
 	strcat(curlCommand, logUrl);
 	strcat(curlCommand, pUsername);
 	strcat(curlCommand, "/LOGSENTINEL_LOGIN/SYSTEM/0?directExternalPush=");
