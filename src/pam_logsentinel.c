@@ -9,11 +9,12 @@
 
 /* expected hook */
 PAM_EXTERN int pam_sm_setcred( pam_handle_t *pamh, int flags, int argc, const char **argv ) {
+	pam_syslog(pamh, LOG_INFO, "SetCred called for LogSentinel module");
 	return PAM_SUCCESS;
 }
 
 PAM_EXTERN int pam_sm_acct_mgmt(pam_handle_t *pamh, int flags, int argc, const char **argv) {
-	printf("Acct mgmt\n");
+	pam_syslog(pamh, LOG_INFO, "AcctMgmt called for LogSentinel module");
 	return PAM_SUCCESS;
 }
 
