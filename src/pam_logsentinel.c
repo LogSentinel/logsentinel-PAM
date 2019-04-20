@@ -71,7 +71,7 @@ PAM_EXTERN int pam_sm_authenticate( pam_handle_t *pamh, int flags,int argc, cons
 	return PAM_SUCCESS;
 }
 
-PAM_EXTERN iint pam_sm_open_session(pam_handle_t *pamh, int flags, int argc, const char **argv) {
+PAM_EXTERN int pam_sm_open_session(pam_handle_t *pamh, int flags, int argc, const char **argv) {
 	char c[1000];
 	FILE *fptr;
 
