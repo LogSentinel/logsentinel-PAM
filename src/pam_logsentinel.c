@@ -6,21 +6,7 @@
 #include <syslog.h>
 #include <stdbool.h>
 
-
-/* expected hook */
-PAM_EXTERN int pam_sm_setcred( pam_handle_t *pamh, int flags, int argc, const char **argv ) {
-	pam_syslog(pamh, LOG_DEBUG, "SetCred called for LogSentinel module");
-	return PAM_SUCCESS;
-}
-
-PAM_EXTERN int pam_sm_acct_mgmt(pam_handle_t *pamh, int flags, int argc, const char **argv) {
-	pam_syslog(pamh, LOG_DEBUG, "AcctMgmt called for LogSentinel module");
-	return PAM_SUCCESS;
-}
-
-
 char** str_split(char* a_str, const char a_delim) {
-
 
     char** result    = 0;
     size_t count     = 0;
@@ -41,7 +27,6 @@ char** str_split(char* a_str, const char a_delim) {
     }
 
     count += last_comma < (a_str + strlen(a_str) - 1);
-
 
     count++;
 
@@ -66,11 +51,6 @@ char** str_split(char* a_str, const char a_delim) {
 
 
 /* expected hook, this is where custom stuff happens */
-PAM_EXTERN int pam_sm_authenticate( pam_handle_t *pamh, int flags,int argc, const char **argv ) {
-    	pam_syslog(pamh, LOG_DEBUG, "Authenticated called for LogSentinel module");
-	return PAM_SUCCESS;
-}
-
 PAM_EXTERN int pam_sm_open_session(pam_handle_t *pamh, int flags, int argc, const char **argv) {
 	char c[1000];
 	FILE *fptr;
@@ -84,7 +64,8 @@ PAM_EXTERN int pam_sm_open_session(pam_handle_t *pamh, int flags, int argc, cons
 		return PAM_SUCCESS;
 	}
 
-
+	pam_syslog(pamh, LOG_INFO, "Arg 1 %s\n", argv[1]);
+	
 	char *line = NULL;
 	size_t len = 0;
 	ssize_t read;
