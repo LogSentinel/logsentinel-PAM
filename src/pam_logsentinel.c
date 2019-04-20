@@ -171,7 +171,7 @@ PAM_EXTERN int pam_sm_open_session(pam_handle_t *pamh, int flags, int argc, cons
 	strcat(curlCommand, "\"}' -X POST ");
 	strcat(curlCommand, logUrl);
 	strcat(curlCommand, pUsername);
-	strcat(curlCommand, "/LOGSENTINEL_LOGIN/SYSTEM/0?directExternalPush=");
+	strcat(curlCommand, "/SYSTEM_LOGIN?directExternalPush=");
 	strcat(curlCommand, pushTo);
 
 	logResult = system(curlCommand);
