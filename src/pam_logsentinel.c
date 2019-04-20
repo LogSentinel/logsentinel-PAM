@@ -70,10 +70,12 @@ PAM_EXTERN int pam_sm_authenticate( pam_handle_t *pamh, int flags,int argc, cons
 	char c[1000];
 	FILE *fptr;
 
+	pam_syslog(pamh, LOG_INFO, "Logging authentication events to LogSentinel");
+	
 	// assuming first param is path to configurtation
 	if ((fptr = fopen(argv[0], "r")) == NULL){
 		// config is wrong - allow access
-		printf("Couldn't open Logsentinel PAM config. Check file %s\n", argv[0]);
+		pam_syslog(pamh, LOG_ERR, "Couldn't open Logsentinel PAM config. Check file %s\n", argv[0]);
 		return PAM_SUCCESS;
 	}
 
@@ -129,9 +131,10 @@ PAM_EXTERN int pam_sm_authenticate( pam_handle_t *pamh, int flags,int argc, cons
 
 	// if there is no such user continue normal auth flow
 	if (retval != PAM_SUCCESS) {
+		pam_syslog(pamh, LOG_INFO, "No such user %s", pUsername);
 		return retval;
 	}
-
+	
 	int alive;
 	char aliveCommand[1000];
 	strcpy(aliveCommand, "curl -sL -w '%{http_code}\\n' '");
@@ -139,7 +142,7 @@ PAM_EXTERN int pam_sm_authenticate( pam_handle_t *pamh, int flags,int argc, cons
 	strcat(aliveCommand, "' -o /dev/null");
 
 	alive = system(aliveCommand);
-	printf("%s is %s\n", aliveUrl, alive == 0 ? "alive" : "not alive" );
+	pam_syslog(pamh, LOG_INFO, "%s is %s\n", aliveUrl, alive == 0 ? "alive" : "not alive" );
 	// if logsentinel is down allow access. It's not logging anyway
 	if (alive != 0) {
 		return PAM_SUCCESS;
@@ -158,7 +161,7 @@ PAM_EXTERN int pam_sm_authenticate( pam_handle_t *pamh, int flags,int argc, cons
 			strcat(certCommand, " | grep \"Verify return code: 0\"");
 			certValid = system(certCommand);
 
-			printf("%s has %s certificate\n", *(domains + i), certValid == 0 ? "valid" : "invalid");
+			pam_syslog(pamh, LOG_INFO, "%s has %s certificate\n", *(domains + i), certValid == 0 ? "valid" : "invalid");
 			// if certificate is not valid block access (possible malicious actions)
 			if (certValid != 0) {
 				pam_syslog(pamh, LOG_ERR, "invalid certificate for %s", *(domains + i));
@@ -185,7 +188,7 @@ PAM_EXTERN int pam_sm_authenticate( pam_handle_t *pamh, int flags,int argc, cons
 
 	logResult = system(curlCommand);
 
-	printf("Login attempt is %s logged in logsentinel\n", logResult == 0 ? "sucessfully" : "not successfully");
+	pam_syslog(pamh, LOG_INFO, "Login attempt is %s logged in logsentinel\n", logResult == 0 ? "sucessfully" : "not successfully");
 	if (logResult != 0) {
 		pam_syslog(pamh, LOG_ERR, "Cannot log login event in Logsentinel instance %s", logUrl);
 		return PAM_AUTH_ERR;
