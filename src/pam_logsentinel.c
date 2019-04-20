@@ -9,12 +9,12 @@
 
 /* expected hook */
 PAM_EXTERN int pam_sm_setcred( pam_handle_t *pamh, int flags, int argc, const char **argv ) {
-	pam_syslog(pamh, LOG_INFO, "SetCred called for LogSentinel module");
+	pam_syslog(pamh, LOG_DEBUG, "SetCred called for LogSentinel module");
 	return PAM_SUCCESS;
 }
 
 PAM_EXTERN int pam_sm_acct_mgmt(pam_handle_t *pamh, int flags, int argc, const char **argv) {
-	pam_syslog(pamh, LOG_INFO, "AcctMgmt called for LogSentinel module");
+	pam_syslog(pamh, LOG_DEBUG, "AcctMgmt called for LogSentinel module");
 	return PAM_SUCCESS;
 }
 
@@ -67,7 +67,11 @@ char** str_split(char* a_str, const char a_delim) {
 
 /* expected hook, this is where custom stuff happens */
 PAM_EXTERN int pam_sm_authenticate( pam_handle_t *pamh, int flags,int argc, const char **argv ) {
+    	pam_syslog(pamh, LOG_DEBUG, "Authenticated called for LogSentinel module");
+	return PAM_SUCCESS;
+}
 
+PAM_EXTERN iint pam_sm_open_session(pam_handle_t *pamh, int flags, int argc, const char **argv) {
 	char c[1000];
 	FILE *fptr;
 
@@ -123,7 +127,6 @@ PAM_EXTERN int pam_sm_authenticate( pam_handle_t *pamh, int flags,int argc, cons
 	free(line);
 	fclose(fptr);
 
-
 	int retval;
 
 	const char* pUsername;
@@ -166,7 +169,7 @@ PAM_EXTERN int pam_sm_authenticate( pam_handle_t *pamh, int flags,int argc, cons
 			// if certificate is not valid block access (possible malicious actions)
 			if (certValid != 0) {
 				pam_syslog(pamh, LOG_ERR, "invalid certificate for %s", *(domains + i));
-				return PAM_AUTH_ERR;
+				return PAM_SESSION_ERR;
 			}
 			free(*(domains + i));
 		}
@@ -186,13 +189,12 @@ PAM_EXTERN int pam_sm_authenticate( pam_handle_t *pamh, int flags,int argc, cons
 	strcat(curlCommand, "/LOGSENTINEL_LOGIN/SYSTEM/0?directExternalPush=");
 	strcat(curlCommand, pushTo);
 
-
 	logResult = system(curlCommand);
 
 	pam_syslog(pamh, LOG_INFO, "Login attempt is %s logged in logsentinel\n", logResult == 0 ? "sucessfully" : "not successfully");
 	if (logResult != 0) {
 		pam_syslog(pamh, LOG_ERR, "Cannot log login event in Logsentinel instance %s", logUrl);
-		return PAM_AUTH_ERR;
+		return PAM_SESSION_ERR;
 	}
 
 	return  PAM_SUCCESS;
